@@ -20,7 +20,6 @@ course = w3.eth.contract(
     address=Web3.to_checksum_address(course_address),
     abi=course_abi
 )
-
 def pay_course():
     has_access = course.functions.checkAccess().call()
     if has_access:

@@ -16,21 +16,30 @@ contract RefundManager {
         course = new CoursePayment();
         refundDeadline = block.timestamp + 1 days;
     }
-
     function refund() external {
         require(block.timestamp <= refundDeadline, "Refund period expired");
         require(course.checkAccess(), "No access");
 
-        address student = course.student();
-        uint256 amount = course.paidAmount();
-
         course.revokeAccess();
+        course.refundToStudent();
 
-        (bool ok, ) = payable(student).call{value: amount}("");
-        require(ok, "Refund failed");
-
-        emit RefundProcessed(student, amount);
+        emit RefundProcessed(course.student(), course.paidAmount());
     }
+
+//    function refund() external {
+//        require(block.timestamp <= refundDeadline, "Refund period expired");
+//        require(course.checkAccess(), "No access");
+//
+//        address student = course.student();
+//        uint256 amount = course.paidAmount();
+//
+//        course.revokeAccess();
+//
+//        (bool ok, ) = payable(student).call{value: amount}("");
+//        require(ok, "Refund failed");
+//
+//        emit RefundProcessed(student, amount);
+//    }
 
     function getCourseAddress() external view returns (address) {
         return address(course);
